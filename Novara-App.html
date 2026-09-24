@@ -1,0 +1,1151 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Novara</title>
+<style>
+:root{
+  --bg:#f6f7fb;--panel:#fff;--panel2:#fbfbfe;--text:#151827;--muted:#73798b;
+  --line:#e8eaf1;--accent:#6657e8;--accent2:#8b5cf6;--accentSoft:#efedff;
+  --green:#18a66a;--red:#e05252;--shadow:0 10px 35px rgba(30,25,70,.07)
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input{font:inherit}button{cursor:pointer}
+.app{display:flex;min-height:100vh;overflow:visible}
+.sidebar{width:238px;background:#fff;border-right:1px solid var(--line);position:fixed;inset:0 auto 0 0;padding:22px 14px;z-index:5;overflow-y:auto;overflow-x:hidden;height:100vh}
+.logo{display:flex;align-items:center;gap:11px;padding:3px 10px 28px;font-weight:900;font-size:22px;letter-spacing:-.7px}
+.logoMark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#6657e8,#9a72ff);display:grid;place-items:center;color:#fff;font-weight:900;box-shadow:0 8px 20px #6657e83b}
+.logo small{display:block;font-size:10px;color:#9297a7;letter-spacing:.8px;font-weight:600;margin-top:2px}
+.nav{display:grid;gap:4px;min-height:max-content}.nav button{border:0;background:transparent;color:#697084;width:100%;display:flex;align-items:center;gap:12px;text-align:left;padding:11px 12px;border-radius:11px;font-weight:650}
+.nav button:hover{background:#f4f3ff;color:#4d42bd}.nav button.active{background:#efedff;color:#5748d5}
+.nav svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
+.sideBottom{position:absolute;bottom:20px;left:14px;right:14px;border-top:1px solid var(--line);padding-top:13px}
+.main{margin-left:238px;width:calc(100% - 238px);padding:24px 28px 80px;max-width:1500px;min-height:100vh;overflow:visible}
+.topbar{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.search{flex:1;max-width:580px;background:#fff;border:1px solid var(--line);border-radius:12px;height:44px;display:flex;align-items:center;padding:0 13px;gap:9px;color:#8a90a1}
+.search input{border:0;outline:0;width:100%;background:transparent;color:var(--text)}
+.topActions{margin-left:auto;display:flex;align-items:center;gap:9px}
+.chip{background:#fff;border:1px solid var(--line);border-radius:11px;padding:9px 12px;display:flex;align-items:center;gap:8px;font-weight:700}
+.avatar{width:38px;height:38px;border-radius:50%;background:#ebe9ff;color:#5b4bd2;display:grid;place-items:center;font-weight:800}
+.section{display:none}.section.active{display:block}
+.hero{background:linear-gradient(135deg,#211d4c,#5042c6);color:#fff;border-radius:20px;padding:28px 30px;display:flex;justify-content:space-between;align-items:center;gap:25px;overflow:hidden;position:relative;box-shadow:0 18px 45px #5142c625}
+.hero:after{content:"";position:absolute;width:250px;height:250px;border-radius:50%;right:-80px;top:-100px;background:#ffffff12}
+.hero h1{font-size:30px;margin:0 0 8px;letter-spacing:-1px}.hero p{margin:0;color:#d9d7ff}.heroText{position:relative;z-index:1}.heroAction{position:relative;z-index:1}
+.primary{border:0;background:linear-gradient(135deg,#7566f4,#604fe1);color:#fff;padding:11px 16px;border-radius:10px;font-weight:750;box-shadow:0 8px 20px #6657e833}
+.primary:hover{filter:brightness(1.05)}.secondary{border:1px solid var(--line);background:#fff;color:#454b5d;padding:10px 14px;border-radius:10px;font-weight:700}
+.pageHead{display:flex;justify-content:space-between;align-items:end;margin:26px 0 14px}.pageHead h2{margin:0;font-size:20px}.pageHead p{margin:4px 0 0;color:var(--muted)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow)}
+.levelCard{margin-top:18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}.levelTitle{margin-right:auto}.levelTitle small{color:var(--muted)}.levelTitle strong{display:block;font-size:20px;margin-top:3px}
+.levels{display:flex;gap:7px;flex-wrap:wrap}.levelBtn{min-width:42px;padding:9px 11px;border-radius:9px;border:1px solid var(--line);background:#fff;color:#555b6c;font-weight:750}.levelBtn:hover{border-color:#bcb5ff}.levelBtn.selected{background:#6657e8;color:#fff;border-color:#6657e8}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:15px}.stat small{color:var(--muted)}.stat strong{display:block;font-size:25px;margin-top:6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.subject{min-height:152px;position:relative;overflow:hidden}.subjectIcon{width:42px;height:42px;border-radius:12px;background:var(--accentSoft);color:#5b4bd2;display:grid;place-items:center;margin-bottom:15px}.subjectIcon svg{width:21px;height:21px}.subject h3{margin:0 0 6px}.subject p{margin:0 0 15px;color:var(--muted);font-size:13px}.subject button{padding:8px 11px}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.quick .card{display:flex;align-items:center;gap:12px;cursor:pointer}.quickIcon{width:38px;height:38px;border-radius:10px;background:#f1efff;color:#5e50d7;display:grid;place-items:center}.quick h4{margin:0 0 3px}.quick small{color:var(--muted)}
+.twoCol{display:grid;grid-template-columns:1.35fr .65fr;gap:15px;margin-top:15px}.progressRing{width:105px;height:105px;border-radius:50%;background:conic-gradient(#6b5bf0 0 68%,#eeeef5 68%);display:grid;place-items:center}.progressRing:after{content:"68%";width:79px;height:79px;background:#fff;border-radius:50%;display:grid;place-items:center;font-weight:850;color:#5144c6}.progressWrap{display:flex;gap:20px;align-items:center}.miniStats{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1}.miniStats div{background:#fafafe;border:1px solid var(--line);border-radius:10px;padding:10px}.miniStats b{display:block;font-size:18px}.miniStats span{color:var(--muted);font-size:11px}
+.quizBox{max-width:820px;margin:auto}.quizHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.questionCard h2{font-size:23px;line-height:1.35}.answers{display:grid;gap:10px;margin-top:20px}.answer{border:1px solid var(--line);background:#fff;border-radius:11px;padding:14px;text-align:left;font-weight:650}.answer:hover{border-color:#b5adff;background:#faf9ff}.answer.correct{background:#eaf9f1;border-color:#4dc28a;color:#117747}.answer.wrong{background:#fff0f0;border-color:#e77878;color:#a53232}
+.bar{height:8px;background:#ececf3;border-radius:20px;overflow:hidden}.bar i{height:100%;display:block;background:linear-gradient(90deg,#6657e8,#947dff);width:0}
+.plans{grid-template-columns:repeat(3,1fr)}.plan{position:relative}.plan.featured{border:2px solid #7566f4}.badge{position:absolute;right:14px;top:14px;background:#efedff;color:#5a4bd2;border-radius:20px;padding:5px 8px;font-size:11px;font-weight:800}.price{font-size:31px;font-weight:900;margin:12px 0}.price small{font-size:12px;color:var(--muted);font-weight:600}.plan ul{color:var(--muted);line-height:1.9;padding-left:20px;min-height:145px}
+.taskInput{display:flex;gap:8px}.taskInput input{flex:1;border:1px solid var(--line);border-radius:10px;padding:11px;outline:0}.task{display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);padding:13px 3px}.task:last-child{border:0}
+.modal{position:fixed;inset:0;background:#11182788;display:none;align-items:center;justify-content:center;z-index:20;padding:20px}.modal.show{display:flex}.modalbox{background:#fff;border-radius:17px;padding:24px;max-width:430px;width:100%;box-shadow:0 25px 80px #11182730}.modalbox h2{margin-top:0}
+@media(max-width:1050px){.quick{grid-template-columns:1fr 1fr}.twoCol{grid-template-columns:1fr}.plans{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.sidebar{width:70px;padding:15px 8px;overflow-y:auto}.logo{justify-content:center;padding:4px 0 22px}.logoText,.nav button span,.sideBottom{display:none}.nav button{justify-content:center}.main{margin-left:70px;width:calc(100% - 70px);padding:18px}.topActions .chip{display:none}.hero{padding:23px;}.hero h1{font-size:24px}.stats{grid-template-columns:1fr}.quick{grid-template-columns:1fr}.plans{grid-template-columns:1fr}}
+
+.aiPage{max-width:1050px;margin:auto}
+.aiHero{background:linear-gradient(135deg,#211d4c,#5b49da);color:#fff;border-radius:20px;padding:24px 26px;position:relative;overflow:hidden;box-shadow:0 18px 45px #5142c625}
+.aiHero:after{content:"";position:absolute;width:240px;height:240px;border-radius:50%;right:-80px;top:-110px;background:#ffffff10}
+.aiHero h1{margin:0 0 7px;font-size:28px;letter-spacing:-.6px}.aiHero p{margin:0;color:#dfdcff;max-width:680px;line-height:1.55}
+.aiQuick{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.aiQuick button{border:1px solid #ffffff26;background:#ffffff12;color:#fff;padding:9px 12px;border-radius:10px;font-weight:700}
+.aiLayout{display:grid;grid-template-columns:1fr 300px;gap:15px;margin-top:15px}
+.chatCard{padding:0;overflow:hidden}.chatHead{padding:15px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.botDot{width:10px;height:10px;border-radius:50%;background:#20b477;display:inline-block;margin-right:7px;box-shadow:0 0 0 4px #20b47715}
+.chatMessages{height:420px;overflow:auto;padding:18px;background:#fafafe}.msg{display:flex;margin-bottom:12px}.msg.user{justify-content:flex-end}.bubble{max-width:80%;padding:11px 13px;border-radius:14px;line-height:1.5;white-space:pre-wrap}.msg.bot .bubble{background:#fff;border:1px solid var(--line);border-top-left-radius:5px}.msg.user .bubble{background:#6657e8;color:#fff;border-top-right-radius:5px}
+.aiInputRow{display:flex;gap:9px;padding:13px;border-top:1px solid var(--line);background:#fff}.aiInput{flex:1;border:1px solid var(--line);border-radius:11px;padding:12px 13px;outline:none;resize:none;min-height:44px;max-height:120px}.aiInput:focus{border-color:#b9b0ff;box-shadow:0 0 0 3px #6657e812}
+.aiSide .card{margin-bottom:15px}.aiTip{background:#f7f5ff;border:1px solid #ece9ff;border-radius:12px;padding:11px;color:#5a51a4;line-height:1.45}
+.aiHistory button{display:block;width:100%;border:0;background:transparent;text-align:left;padding:9px 8px;border-radius:8px;color:#596074}.aiHistory button:hover{background:#f6f4ff;color:#5043c4}
+@media(max-width:900px){.aiLayout{grid-template-columns:1fr}.aiSide{display:grid;grid-template-columns:1fr 1fr;gap:12px}.aiSide .card{margin:0}}
+@media(max-width:650px){.aiSide{grid-template-columns:1fr}.chatMessages{height:360px}}
+
+ .sidebar::-webkit-scrollbar{width:5px}.sidebar::-webkit-scrollbar-thumb{background:#d9d9e6;border-radius:10px}.sidebar::-webkit-scrollbar-track{background:transparent}
+.modeTag{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#6558d8}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo"><div class="logoMark">N</div><div class="logoText">NOVARA<small>LEARNING PLATFORM</small></div></div>
+  <nav class="nav">
+    <button class="active" onclick="show('home',this)"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10.5V20h14v-9.5"/><path d="M9 20v-5h6v5"/></svg><span>Home</span></button>
+    <button onclick="show('subjects',this)"><svg viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3V4Z"/><path d="M8 7h7M8 11h7M8 15h5"/></svg><span>Subjects</span></button>
+    <button onclick="show('levels',this)"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3"/><path d="M5 20c.8-4 3.1-6 7-6s6.2 2 7 6"/><path d="M4 10H2m20 0h-2"/></svg><span>Classes</span></button>
+    <button onclick="show('quiz',this)"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="m9 9 1.5 1.5L14 7.8M9 15h6"/></svg><span>Practice</span></button>
+    <button onclick="show('tutor',this)"><svg viewBox="0 0 24 24"><path d="M6 17.5A4.5 4.5 0 0 1 8 9.2V7a4 4 0 0 1 8 0v2.2a4.5 4.5 0 0 1 2 8.3"/><path d="M9 19h6M10 22h4"/><path d="M12 10v4M10 12h4"/></svg><span>AI Tutor</span></button>
+    <button onclick="show('tasks',this)"><svg viewBox="0 0 24 24"><path d="M7 3h10v18H7z"/><path d="M9 7h6M9 11h6M9 15h4"/></svg><span>Homework</span></button>
+    <button onclick="show('progress',this)"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h17"/><path d="m7 15 4-4 3 2 5-7"/></svg><span>Progress</span></button>
+    <button onclick="show('settings',this)"><svg viewBox="0 0 24 24"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z"/><path d="m19.4 15 .1.1a2 2 0 1 1-2.8 2.8l-.1-.1a2 2 0 0 0-3.4 1.4v.3a2 2 0 1 1-4 0v-.3A2 2 0 0 0 5.8 17.8l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A2 2 0 0 0 4.4 11.6H4a2 2 0 1 1 0-4h.4A2 2 0 0 0 3 4.2l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A2 2 0 0 0 9.2 2H9a2 2 0 1 1 4 0h-.2A2 2 0 0 0 16.2 1.4l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1A2 2 0 0 0 17.6 7.2H18a2 2 0 1 1 0 4h-.4A2 2 0 0 0 19.4 15Z"/></svg><span>Settings</span></button>
+    <button onclick="show('plans',this)"><svg viewBox="0 0 24 24"><path d="m12 3 2.2 5 5.4.5-4.1 3.5 1.2 5.2L12 14.4 7.3 17.2l1.2-5.2-4.1-3.5 5.4-.5L12 3Z"/></svg><span>Premium</span></button>
+  </nav>
+
+</aside>
+
+<main class="main">
+<div class="topbar">
+  <div class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input placeholder="Search topics, chapters, or tests..." oninput="searchSubjects(this.value)"></div>
+  <div class="topActions"><div class="chip">🔥 <span id="streak">1</span> day streak</div><div class="chip">XP <span id="xp">0</span></div><div class="chip" id="accountPlan">Standard</div><div class="avatar">N</div></div>
+</div>
+
+<section id="home" class="section active">
+  <div class="hero"><div class="heroText"><h1>Study smarter. Build confidence.</h1><p>Practice, test yourself, and track your progress — all in one place.</p></div><div class="heroAction"><button class="primary" onclick="startQuiz()">Start daily quiz</button></div></div>
+  <div class="card levelCard"><div class="levelTitle"><small>Current class</small><strong id="homeLevelTitle">Class 6</strong></div><div class="levels" id="quickLevels"></div><button class="secondary" onclick="show('levels')">All classes</button></div>
+  <div class="stats"><div class="card stat"><small>Questions answered</small><strong id="answered">0</strong></div><div class="card stat"><small>Correct answers</small><strong id="correct">0</strong></div><div class="card stat"><small>Current level</small><strong id="level">1</strong></div></div>
+  <div class="pageHead"><div><h2>Subjects</h2><p>Practice by subject for your selected class.</p></div><button class="secondary" onclick="show('subjects')">View all</button></div>
+  <div class="grid" id="homeSubjects"></div>
+  <div class="pageHead"><div><h2>Quick actions</h2></div></div>
+  <div class="quick">
+    <div class="card" onclick="startQuiz()"><div class="quickIcon">✓</div><div><h4>Start Practice</h4><small>Subject questions</small></div></div>
+    <div class="card" onclick="startQuiz()"><div class="quickIcon">▣</div><div><h4>Take a Test</h4><small>Timed practice</small></div></div>
+    <div class="card" onclick="show('tasks')"><div class="quickIcon">✎</div><div><h4>Homework</h4><small>Track your tasks</small></div></div>
+    <div class="card" onclick="show('progress')"><div class="quickIcon">↗</div><div><h4>Progress</h4><small>See your stats</small></div></div>
+  </div>
+  <div class="twoCol">
+    <div class="card"><div class="pageHead" style="margin:0 0 14px"><div><h2>Today's challenge</h2><p>Complete 10 questions to earn XP.</p></div><button class="primary" onclick="startQuiz()">Start</button></div><div class="bar"><i id="challengeBar"></i></div></div>
+    <div class="card"><h3 style="margin-top:0">Your progress</h3><div class="progressWrap"><div class="progressRing"></div><div class="miniStats"><div><b id="pAnswered">0</b><span>Questions</span></div><div><b id="accuracy">0%</b><span>Accuracy</span></div><div><b id="pxp">0</b><span>Total XP</span></div><div><b id="streak2">1</b><span>Day streak</span></div></div></div></div>
+  </div>
+</section>
+
+<section id="subjects" class="section">
+  <div class="pageHead"><div><h2>Subjects</h2><p>Choose a subject and start practicing. Questions are matched to your selected class.</p></div></div><div class="grid" id="subjectsGrid"></div>
+</section>
+
+<section id="levels" class="section">
+  <div class="pageHead"><div><h2>Choose your class</h2><p>Each class has its own question bank and difficulty.</p></div></div><div class="grid" id="levelsGrid"></div>
+</section>
+
+
+<section id="tutor" class="section">
+  <div class="aiPage">
+    <div class="aiHero">
+      <div style="position:relative;z-index:1">
+        <div style="font-size:11px;letter-spacing:1.7px;text-transform:uppercase;opacity:.75;font-weight:800">NOVARA STUDY TUTOR</div>
+        <h1>Stuck on something? Let's break it down.</h1>
+        <p>Ask a school question, paste a problem, or tell the tutor what you don't understand. It will explain the idea step by step in student-friendly language.</p>
+        <div class="aiQuick">
+          <button onclick="sendTutorPrompt('Explain fractions like I am in Class '+state.level+'.')">Explain a topic</button>
+          <button onclick="sendTutorPrompt('Help me solve a maths question step by step.')">Solve maths</button>
+          <button onclick="sendTutorPrompt('Give me a simple explanation of photosynthesis.')">Explain science</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="aiLayout">
+      <div class="card chatCard">
+        <div class="chatHead">
+          <div><span class="botDot"></span><strong>Novara Tutor</strong><div style="color:var(--muted);font-size:12px;margin-top:2px">Online study help</div></div>
+          <button class="secondary" onclick="clearTutor()">Clear</button>
+        </div>
+        <div class="chatMessages" id="tutorMessages"></div>
+        <div class="aiInputRow">
+          <textarea id="tutorInput" class="aiInput" placeholder="Ask: “What is 15% of 200?” or “Explain photosynthesis…”"></textarea>
+          <button class="primary" onclick="askTutor()">Ask</button>
+        </div>
+      </div>
+
+      <div class="aiSide">
+        <div class="card">
+          <h3 style="margin-top:0">How to get better help</h3>
+          <div class="aiTip">Tell the tutor your <b>class</b>, the <b>question</b>, and where you got stuck.</div>
+          <p style="color:var(--muted);font-size:12px">Example: “I am in Class 6. I know how to find 10% but don't understand 15%.”</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Recent questions</h3>
+          <div class="aiHistory" id="tutorHistory"></div>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Tutor mode</h3>
+          <p style="color:var(--muted);margin-bottom:0">This version includes an offline smart tutor so the feature works immediately. A real cloud AI can be connected later through a secure backend.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="quiz" class="section">
+  <div class="quizBox">
+    <div class="pageHead" style="margin-top:0">
+      <div><h2>Practice Center</h2><p>Choose how you want to learn today.</p></div>
+      <div class="chip" id="quizTimer" style="display:none">15:00</div>
+    </div>
+
+    <div class="grid" style="margin-bottom:15px">
+      <div class="card" onclick="startQuiz()" style="cursor:pointer">
+        <div class="modeTag">Recommended</div>
+        <h3 style="margin:6px 0">Daily Challenge</h3>
+        <p style="color:var(--muted);margin-bottom:12px">10 questions across your Class level.</p>
+        <button class="primary" onclick="event.stopPropagation();startQuiz()">Start</button>
+      </div>
+      <div class="card" onclick="quickQuiz()" style="cursor:pointer">
+        <div class="modeTag">Quick</div>
+        <h3 style="margin:6px 0">Quick Practice</h3>
+        <p style="color:var(--muted);margin-bottom:12px">5 questions for a short study session.</p>
+        <button class="secondary" onclick="event.stopPropagation();quickQuiz()">5 questions</button>
+      </div>
+      <div class="card" onclick="fullTest()" style="cursor:pointer">
+        <div class="modeTag">Test</div>
+        <h3 style="margin:6px 0">Full Test</h3>
+        <p style="color:var(--muted);margin-bottom:12px">20 questions with a 15-minute timer.</p>
+        <button class="secondary" onclick="event.stopPropagation();fullTest()">Start test</button>
+      </div>
+      <div class="card" onclick="reviewMistakes()" style="cursor:pointer">
+        <div class="modeTag">Review</div>
+        <h3 style="margin:6px 0">Review Mistakes</h3>
+        <p style="color:var(--muted);margin-bottom:12px">Practice questions you previously missed.</p>
+        <button class="secondary" onclick="event.stopPropagation();reviewMistakes()">Review</button>
+      </div>
+    </div>
+
+    <div id="quizIntro" class="card" style="margin-bottom:15px">
+      <strong>Adaptive learning</strong>
+      <p style="color:var(--muted);margin:7px 0 0">Novara keeps mistakes for review, uses your selected Class, and explains answers after you respond.</p>
+    </div>
+
+    <div class="quizHead">
+      <div>
+        <h2 id="quizTitle" style="margin:0">Practice</h2>
+        <p id="quizLevel" style="color:var(--muted);margin:4px 0">Class 6</p>
+      </div>
+      <div class="chip" id="qcount">Question 1/10</div>
+    </div>
+
+    <div class="card questionCard">
+      <div class="bar"><i id="qbar"></i></div>
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:14px">
+        <span class="chip" id="difficultyChip">Core</span>
+        <span style="color:var(--muted);font-size:12px" id="subjectChip">Subject</span>
+      </div>
+      <h2 id="question">Choose a quiz to begin.</h2>
+      <div class="answers" id="answers"></div>
+
+      <div id="explanationBox" class="card" style="display:none;background:#faf9ff;border-color:#eae6ff;margin-top:15px">
+        <strong>Why?</strong>
+        <p id="explanationText" style="white-space:pre-wrap;line-height:1.55;margin-bottom:0"></p>
+      </div>
+
+      <p id="feedback" style="font-weight:750;min-height:20px"></p>
+      <div style="display:flex;gap:9px;flex-wrap:wrap">
+        <button class="secondary" id="explainBtn" style="display:none" onclick="explainCurrentQuestion()">Explain this</button>
+        <button class="secondary" id="tutorQuestionBtn" style="display:none" onclick="askCurrentQuestionTutor()">Ask Tutor</button>
+        <button class="primary" id="nextBtn" style="display:none" onclick="nextQuestion()">Next question</button>
+      </div>
+
+      <div id="quizResultActions" style="display:none;margin-top:18px;gap:9px;flex-wrap:wrap">
+        <button class="primary" onclick="startQuiz()">Another daily set</button>
+        <button class="secondary" onclick="reviewMistakes()">Review mistakes</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="tasks" class="section">
+  <div class="pageHead"><div><h2>Homework</h2><p>Keep your school tasks organized.</p></div></div>
+  <div class="card"><div class="taskInput"><input id="taskInput" placeholder="Add a homework task..."><button class="primary" onclick="addTask()">Add</button></div><div id="taskList" style="margin-top:12px"></div></div>
+</section>
+
+<section id="progress" class="section">
+  <div class="pageHead"><div><h2>Progress</h2><p>See how your study habits are developing.</p></div></div>
+  <div class="card"><h3>XP to next level</h3><div class="bar"><i id="xpbar"></i></div><p id="progressText" style="color:var(--muted)">0 / 100 XP</p></div>
+  <div class="stats"><div class="card stat"><small>Questions</small><strong id="ppAnswered">0</strong></div><div class="card stat"><small>Accuracy</small><strong id="pAccuracy">0%</strong></div><div class="card stat"><small>Level</small><strong id="pLevel">1</strong></div></div>
+</section>
+
+
+<section id="settings" class="section">
+  <div class="pageHead">
+    <div><h2>Settings</h2><p>Customize your Novara experience.</p></div>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <h3>Study preferences</h3>
+      <p style="color:var(--muted)">Selected class: <b id="settingsClass">Class 6</b></p>
+      <button class="secondary" onclick="show('levels')">Change class</button>
+    </div>
+    <div class="card">
+      <h3>Appearance</h3>
+      <p style="color:var(--muted)">Novara uses a clean light interface in this version.</p>
+      <button class="secondary" onclick="openModal('Appearance','More appearance options can be added here.')">Customize</button>
+    </div>
+    <div class="card">
+      <h3>Saved data</h3>
+      <p style="color:var(--muted)">Your quiz progress and homework are stored in this browser.</p>
+      <button class="secondary" onclick="clearSavedData()">Reset local data</button>
+    </div>
+  </div>
+</section>
+
+<section id="plans" class="section">
+  <div class="pageHead"><div><h2>Novara Premium</h2><p>Keep the free plan forever, or unlock more tools.</p></div></div>
+  <div class="card" style="margin-bottom:15px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+    <div style="margin-right:auto">
+      <strong>Billing region</strong>
+      <div style="color:var(--muted);font-size:12px">Choose the regional price used at checkout.</div>
+    </div>
+    <select id="billingRegion" onchange="setBillingRegion(this.value)" style="width:auto;min-width:180px;margin:0">
+      <option value="IN">India — INR</option>
+      <option value="INTL">International — USD</option>
+    </select>
+  </div>
+
+  <div class="grid plans">
+    <div class="card plan"><h2>Standard</h2><p style="color:var(--muted)">For everyday learning.</p><div class="price">Free</div><ul><li>Daily challenges</li><li>Core subjects</li><li>Daily challenge</li><li>Homework tracker</li></ul><button class="secondary" onclick="selectPlan('Standard')">Use Standard</button></div>
+    <div class="card plan"><h2>Plus</h2><p style="color:var(--muted)">More practice for less.</p><div class="price" id="plusPrice">₹49 / month</div><ul><li>Unlimited quizzes</li><li>Extra practice questions</li><li>Progress tracking</li><li>More subject content</li><li>No ads</li></ul><button class="primary" id="plusBuyBtn" onclick="openHostedPayment('PLUS')">Choose Plus</button></div>
+    <div class="card plan featured"><span class="badge">POPULAR</span><h2>Pro</h2><p style="color:var(--muted)">Full study toolkit.</p><div class="price" id="proPrice">₹92 / month</div><ul><li>Everything in Plus</li><li>Advanced tests</li><li>Entrance-exam practice</li><li>Custom quizzes</li><li>Detailed statistics</li></ul><button class="primary" id="proBuyBtn" onclick="openHostedPayment('PRO')">Choose Pro</button></div>
+  </div>
+  <p style="color:var(--muted);font-size:12px;margin-top:14px">Checkout opens in your browser once the owner connects the Razorpay subscription link.</p>
+</section>
+</main>
+</div>
+
+<div class="modal" id="modal"><div class="modalbox"><h2 id="modalTitle">Novara</h2><p id="modalText"></p><button class="primary" onclick="closeModal()">Continue</button></div></div>
+
+<script>
+const subjects=[
+ ['Mathematics','math','Numbers, fractions, algebra and more.'],
+ ['Science','flask','Physics, chemistry, biology and everyday science.'],
+ ['History','history','Ancient, medieval and modern history.'],
+ ['Geography','globe','Maps, Earth, places and environments.'],
+ ['English','book','Grammar, vocabulary and comprehension.'],
+ ['Reasoning','brain','Patterns, logic and problem solving.'],
+ ['Computer Science','code','Computers, coding and digital basics.'],
+ ['General Knowledge','star','Useful facts about India and the world.']
+];
+const icons={
+ math:'<svg viewBox="0 0 24 24"><path d="M5 5h14v14H5z"/><path d="M8 9h8M8 13h8M10 7v10"/></svg>',
+ flask:'<svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6A2 2 0 0 0 19 18l-5-9V3"/><path d="M7 15h10"/></svg>',
+ history:'<svg viewBox="0 0 24 24"><path d="M4 20h16M6 20V8l6-4 6 4v12M9 20v-6h6v6M9 9h1M14 9h1"/></svg>',
+ globe:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>',
+ book:'<svg viewBox="0 0 24 24"><path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3V4Z"/><path d="M8 7h6M8 11h6M8 15h4"/></svg>',
+ brain:'<svg viewBox="0 0 24 24"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 3 3h1V4H9Z"/><path d="M15 4a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-3 3h-1V4h1Z"/><path d="M9 9h2M13 9h2M9 14h2M13 14h2"/></svg>',
+ code:'<svg viewBox="0 0 24 24"><path d="m8 7-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg>',
+ star:'<svg viewBox="0 0 24 24"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z"/></svg>'
+};
+const qs=[{"level":3,"s":"Mathematics","q":"What is 27 + 15?","a":["32","42","52","62"],"c":1},{"level":3,"s":"Mathematics","q":"What is 6 × 4?","a":["20","24","28","30"],"c":1},{"level":3,"s":"Mathematics","q":"Which fraction means one half?","a":["1/3","1/4","1/2","2/3"],"c":2},{"level":3,"s":"Science","q":"Which part of a plant usually makes food?","a":["Root","Stem","Leaf","Flower"],"c":2},{"level":3,"s":"Science","q":"Which sense organ do we use to hear?","a":["Eyes","Ears","Nose","Skin"],"c":1},{"level":3,"s":"English","q":"Choose the plural of 'child'.","a":["Childs","Childes","Children","Childrens"],"c":2},{"level":3,"s":"English","q":"Which word is a verb?","a":["Jump","Blue","School","Happy"],"c":0},{"level":3,"s":"General Knowledge","q":"How many days are there in a week?","a":["5","6","7","8"],"c":2},{"level":3,"s":"Geography","q":"Which is the largest land animal?","a":["Tiger","Elephant","Horse","Giraffe"],"c":1},{"level":3,"s":"Reasoning","q":"What comes next: 2, 4, 6, 8, ?","a":["9","10","11","12"],"c":1},{"level":4,"s":"Mathematics","q":"What is 348 + 127?","a":["465","475","485","495"],"c":1},{"level":4,"s":"Mathematics","q":"What is 72 ÷ 8?","a":["7","8","9","10"],"c":2},{"level":4,"s":"Mathematics","q":"A quarter of 100 is:","a":["20","25","30","40"],"c":1},{"level":4,"s":"Science","q":"Which state of matter has a fixed shape?","a":["Solid","Liquid","Gas","Steam"],"c":0},{"level":4,"s":"Science","q":"Which planet is closest to the Sun?","a":["Earth","Mars","Mercury","Venus"],"c":2},{"level":4,"s":"English","q":"Choose the adjective in 'The tall tree swayed.'","a":["tree","tall","swayed","the"],"c":1},{"level":4,"s":"English","q":"Which sentence is in the past tense?","a":["I walk home.","I am walking home.","I walked home.","I will walk home."],"c":2},{"level":4,"s":"History","q":"Who built the Taj Mahal?","a":["Akbar","Shah Jahan","Ashoka","Babur"],"c":1},{"level":4,"s":"Geography","q":"Which direction is opposite to north?","a":["East","West","South","North-east"],"c":2},{"level":4,"s":"Reasoning","q":"Find the odd one out.","a":["Apple","Mango","Banana","Carrot"],"c":3},{"level":5,"s":"Mathematics","q":"What is 3/5 of 20?","a":["8","10","12","15"],"c":2},{"level":5,"s":"Mathematics","q":"What is 25% of 80?","a":["10","20","25","30"],"c":1},{"level":5,"s":"Mathematics","q":"A rectangle is 8 cm long and 3 cm wide. What is its area?","a":["11 cm²","22 cm²","24 cm²","48 cm²"],"c":2},{"level":5,"s":"Science","q":"Which organ helps us breathe?","a":["Heart","Lungs","Stomach","Brain"],"c":1},{"level":5,"s":"Science","q":"The Earth revolves around the:","a":["Moon","Sun","Mars","North Star"],"c":1},{"level":5,"s":"English","q":"Choose the correct pronoun: 'Riya and ___ went to school.'","a":["me","I","my","mine"],"c":1},{"level":5,"s":"History","q":"Who was known as the Iron Man of India?","a":["Sardar Patel","Jawaharlal Nehru","Subhas Chandra Bose","B. R. Ambedkar"],"c":0},{"level":5,"s":"Geography","q":"Which is the largest ocean?","a":["Indian","Atlantic","Pacific","Arctic"],"c":2},{"level":5,"s":"Computer Science","q":"What is a keyboard mainly used for?","a":["Printing","Typing input","Playing sound","Showing pictures"],"c":1},{"level":5,"s":"Reasoning","q":"What comes next: 5, 10, 15, 20, ?","a":["22","24","25","30"],"c":2},{"level":6,"s":"Mathematics","q":"What is 15% of 200?","a":["15","20","30","40"],"c":2},{"level":6,"s":"Mathematics","q":"What is 3/4 of 20?","a":["10","12","15","16"],"c":2},{"level":6,"s":"Mathematics","q":"Which number is divisible by both 3 and 5?","a":["21","25","30","34"],"c":2},{"level":6,"s":"Science","q":"Which organ pumps blood around the body?","a":["Lungs","Heart","Brain","Kidney"],"c":1},{"level":6,"s":"Science","q":"What is the process by which green plants make food?","a":["Respiration","Photosynthesis","Digestion","Transpiration"],"c":1},{"level":6,"s":"History","q":"Who founded the Maurya Empire?","a":["Ashoka","Chandragupta Maurya","Akbar","Harsha"],"c":1},{"level":6,"s":"Geography","q":"Which line divides Earth into the Northern and Southern Hemispheres?","a":["Prime Meridian","Equator","Tropic of Cancer","Arctic Circle"],"c":1},{"level":6,"s":"English","q":"Choose the noun: 'The dog chased the ball.'","a":["chased","the","dog","quickly"],"c":2},{"level":6,"s":"Computer Science","q":"What does CPU stand for?","a":["Central Processing Unit","Computer Power Utility","Core Program User","Central Print Unit"],"c":0},{"level":6,"s":"Reasoning","q":"What comes next: 2, 4, 8, 16, ?","a":["18","24","30","32"],"c":3},{"level":6,"s":"General Knowledge","q":"What is the capital of India?","a":["Mumbai","New Delhi","Kolkata","Chennai"],"c":1},{"level":6,"s":"Science","q":"Which of these is a renewable source of energy?","a":["Coal","Petrol","Solar energy","Natural gas"],"c":2},{"level":7,"s":"Mathematics","q":"Solve: 3x + 5 = 20.","a":["3","5","7","10"],"c":1},{"level":7,"s":"Mathematics","q":"What is -7 + 12?","a":["-19","-5","5","19"],"c":2},{"level":7,"s":"Mathematics","q":"What is the mean of 4, 6, 8 and 10?","a":["6","7","8","9"],"c":1},{"level":7,"s":"Science","q":"What is the basic unit of life?","a":["Tissue","Organ","Cell","System"],"c":2},{"level":7,"s":"Science","q":"Which process changes water vapour into liquid water?","a":["Evaporation","Condensation","Freezing","Melting"],"c":1},{"level":7,"s":"History","q":"Which Mughal emperor built the Taj Mahal?","a":["Akbar","Shah Jahan","Babur","Humayun"],"c":1},{"level":7,"s":"Geography","q":"Which layer of the atmosphere contains most weather?","a":["Troposphere","Stratosphere","Mesosphere","Thermosphere"],"c":0},{"level":7,"s":"English","q":"Which is the comparative form of 'good'?","a":["Gooder","More good","Better","Best"],"c":2},{"level":7,"s":"Computer Science","q":"What is an algorithm?","a":["A computer screen","A step-by-step procedure","A type of battery","A web browser"],"c":1},{"level":7,"s":"Reasoning","q":"If CAT becomes DBU by moving each letter one step forward, DOG becomes:","a":["EPH","CNE","EOG","DPH"],"c":0},{"level":7,"s":"General Knowledge","q":"Which is the smallest prime number?","a":["0","1","2","3"],"c":2},{"level":7,"s":"Science","q":"Which gas do humans need for aerobic respiration?","a":["Nitrogen","Oxygen","Hydrogen","Helium"],"c":1},{"level":8,"s":"Mathematics","q":"What is the square root of 144?","a":["10","11","12","14"],"c":2},{"level":8,"s":"Mathematics","q":"Simplify: 3x + 2x.","a":["5","5x","6x","x"],"c":1},{"level":8,"s":"Mathematics","q":"What is 2³ × 2²?","a":["16","24","32","64"],"c":2},{"level":8,"s":"Science","q":"What is the SI unit of force?","a":["Joule","Watt","Newton","Pascal"],"c":2},{"level":8,"s":"Science","q":"Which part of a plant cell contains chlorophyll?","a":["Nucleus","Chloroplast","Vacuole","Ribosome"],"c":1},{"level":8,"s":"History","q":"The Industrial Revolution began in which country?","a":["France","India","Britain","China"],"c":2},{"level":8,"s":"Geography","q":"What causes day and night?","a":["Earth's revolution","Earth's rotation","Moon's rotation","Sun's rotation"],"c":1},{"level":8,"s":"English","q":"Identify the figure of speech: 'The wind whispered through the trees.'","a":["Simile","Metaphor","Personification","Hyperbole"],"c":2},{"level":8,"s":"Computer Science","q":"Which of these is an example of a programming language?","a":["Python","Chrome","Windows","Google"],"c":0},{"level":8,"s":"Reasoning","q":"What comes next: 3, 6, 12, 24, ?","a":["36","42","48","54"],"c":2},{"level":8,"s":"General Knowledge","q":"Which is the longest river in India?","a":["Ganga","Yamuna","Narmada","Godavari"],"c":0},{"level":8,"s":"Science","q":"A substance with pH less than 7 is generally:","a":["Basic","Neutral","Acidic","Metallic"],"c":2},{"level":9,"s":"Mathematics","q":"If x² = 81 and x is positive, what is x?","a":["7","8","9","10"],"c":2},{"level":9,"s":"Mathematics","q":"What is the factorisation of x² - 9?","a":["(x-3)(x+3)","(x-9)(x+1)","(x-3)²","(x+9)²"],"c":0},{"level":9,"s":"Mathematics","q":"The sum of the angles of a triangle is:","a":["90°","180°","270°","360°"],"c":1},{"level":9,"s":"Science","q":"Which gas is most abundant in Earth's atmosphere?","a":["Oxygen","Nitrogen","Carbon dioxide","Hydrogen"],"c":1},{"level":9,"s":"Science","q":"What is acceleration?","a":["Distance travelled","Rate of change of velocity","Mass per unit volume","Force per unit area"],"c":1},{"level":9,"s":"History","q":"The French Revolution began in:","a":["1492","1688","1789","1914"],"c":2},{"level":9,"s":"Geography","q":"What is the process by which rocks break down at Earth's surface?","a":["Weathering","Condensation","Sedimentation","Combustion"],"c":0},{"level":9,"s":"English","q":"Which is an example of indirect speech?","a":["She said, “I am tired.”","She said that she was tired.","She says, “I am tired.”","She said I am tired."],"c":1},{"level":9,"s":"Computer Science","q":"What is binary made of?","a":["0 and 1","1 and 2","A and B","0 to 9"],"c":0},{"level":9,"s":"Reasoning","q":"5 workers finish a job in 12 days. At the same rate, 10 workers would take:","a":["3 days","6 days","12 days","24 days"],"c":1},{"level":9,"s":"General Knowledge","q":"Which branch of government interprets laws in India?","a":["Executive","Legislature","Judiciary","Election Commission"],"c":2},{"level":9,"s":"Science","q":"What is the chemical symbol for sodium?","a":["So","Sd","Na","S"],"c":2},{"level":10,"s":"Mathematics","q":"What is the discriminant of x² - 5x + 6 = 0?","a":["1","5","6","25"],"c":0},{"level":10,"s":"Mathematics","q":"The zeros of x² - 5x + 6 are:","a":["1 and 6","2 and 3","-2 and -3","3 and 5"],"c":1},{"level":10,"s":"Mathematics","q":"What is sin 90°?","a":["0","1/2","1","√3/2"],"c":2},{"level":10,"s":"Science","q":"Which law states that every action has an equal and opposite reaction?","a":["Newton's First","Newton's Second","Newton's Third","Ohm's Law"],"c":2},{"level":10,"s":"Science","q":"What is the SI unit of electric current?","a":["Volt","Ohm","Ampere","Coulomb"],"c":2},{"level":10,"s":"Science","q":"Which mirror is commonly used as a rear-view mirror in vehicles?","a":["Plane","Concave","Convex","Cylindrical"],"c":2},{"level":10,"s":"History","q":"The Civil Disobedience Movement in India began in:","a":["1919","1930","1942","1947"],"c":1},{"level":10,"s":"Geography","q":"Which soil is especially suitable for cotton cultivation in India?","a":["Alluvial soil","Black soil","Laterite soil","Desert soil"],"c":1},{"level":10,"s":"English","q":"In a formal letter, the subject line should:","a":["Be a long paragraph","Briefly state the purpose","Contain a joke","Be omitted"],"c":1},{"level":10,"s":"Computer Science","q":"What is an algorithm primarily used for?","a":["Designing hardware","Solving a problem systematically","Increasing screen size","Storing electricity"],"c":1},{"level":10,"s":"Reasoning","q":"A train travels 120 km in 2 hours. Its average speed is:","a":["40 km/h","50 km/h","60 km/h","80 km/h"],"c":2},{"level":10,"s":"General Knowledge","q":"The Constitution of India came into effect on:","a":["15 August 1947","26 January 1950","26 November 1949","2 October 1950"],"c":1},{"level":11,"s":"Mathematics","q":"What is the derivative of x²?","a":["x","2x","x²","2"],"c":1},{"level":11,"s":"Mathematics","q":"What is the value of sin²θ + cos²θ?","a":["0","1","2","Depends on θ"],"c":1},{"level":11,"s":"Mathematics","q":"The sum of the first n natural numbers is:","a":["n²","n(n+1)/2","n(n-1)/2","2n"],"c":1},{"level":11,"s":"Physics","q":"What is the SI unit of electric current?","a":["Volt","Ohm","Ampere","Coulomb"],"c":2},{"level":11,"s":"Physics","q":"Newton's second law is expressed as:","a":["F = ma","E = mc²","V = IR","P = VI"],"c":0},{"level":11,"s":"Chemistry","q":"How many electrons can the first shell hold?","a":["2","4","8","18"],"c":0},{"level":11,"s":"Biology","q":"Which organelle is known as the powerhouse of the cell?","a":["Nucleus","Ribosome","Mitochondrion","Golgi apparatus"],"c":2},{"level":11,"s":"English","q":"A figure of speech that compares two unlike things using 'like' or 'as' is:","a":["Metaphor","Simile","Irony","Alliteration"],"c":1},{"level":11,"s":"Computer Science","q":"What is a variable in programming?","a":["A fixed picture","A named storage location for a value","A keyboard key","A network cable"],"c":1},{"level":11,"s":"Economics","q":"What is opportunity cost?","a":["Total money spent","The next best alternative given up","A tax","A market price"],"c":1},{"level":11,"s":"Reasoning","q":"If all A are B and all B are C, then:","a":["No A are C","Some A are not C","All A are C","All C are A"],"c":2},{"level":11,"s":"General Knowledge","q":"Who proposed the theory of evolution by natural selection?","a":["Isaac Newton","Charles Darwin","Gregor Mendel","Albert Einstein"],"c":1},{"level":12,"s":"Mathematics","q":"What is the integral of 2x dx?","a":["x² + C","2x² + C","x + C","2 + C"],"c":0},{"level":12,"s":"Mathematics","q":"If f(x)=x³, then f'(x) is:","a":["x²","2x","3x²","3x"],"c":2},{"level":12,"s":"Mathematics","q":"The probability of an impossible event is:","a":["0","1/2","1","-1"],"c":0},{"level":12,"s":"Physics","q":"Which quantity is measured in joules?","a":["Power","Energy","Current","Pressure"],"c":1},{"level":12,"s":"Physics","q":"What is the SI unit of capacitance?","a":["Tesla","Farad","Henry","Weber"],"c":1},{"level":12,"s":"Chemistry","q":"A catalyst generally:","a":["Gets completely consumed","Changes equilibrium constant","Changes reaction rate without being permanently consumed","Always increases product quantity"],"c":2},{"level":12,"s":"Biology","q":"DNA is short for:","a":["Deoxyribonucleic acid","Dinuclear acid","Deoxyribose nitrogen acid","Double nucleotide acid"],"c":0},{"level":12,"s":"English","q":"Which literary device gives human qualities to non-human things?","a":["Personification","Oxymoron","Pun","Onomatopoeia"],"c":0},{"level":12,"s":"Computer Science","q":"Which data structure follows FIFO order?","a":["Stack","Queue","Tree","Graph"],"c":1},{"level":12,"s":"Economics","q":"Inflation generally refers to:","a":["A fall in all prices","A sustained rise in the general price level","A rise in unemployment only","A fall in money supply only"],"c":1},{"level":12,"s":"Reasoning","q":"If a set has 4 elements, how many subsets does it have?","a":["4","8","12","16"],"c":3},{"level":12,"s":"General Knowledge","q":"The Union Budget of India is presented in Parliament by the:","a":["President","Prime Minister","Finance Minister","Chief Justice"],"c":2},{"level":3,"s":"History","q":"Who is known as the Father of the Indian Constitution?","a":["Mahatma Gandhi","B. R. Ambedkar","Jawaharlal Nehru","Sardar Patel"],"c":1},{"level":3,"s":"Geography","q":"Which planet do we live on?","a":["Mars","Venus","Earth","Jupiter"],"c":2},{"level":3,"s":"Computer Science","q":"Which device is used to move the pointer on a computer screen?","a":["Monitor","Keyboard","Mouse","Printer"],"c":2},{"level":4,"s":"Geography","q":"Which continent is India part of?","a":["Europe","Asia","Africa","Australia"],"c":1},{"level":4,"s":"Computer Science","q":"Which device displays text and pictures from a computer?","a":["Monitor","Mouse","Keyboard","Speaker"],"c":0},{"level":4,"s":"General Knowledge","q":"How many letters are there in the English alphabet?","a":["24","25","26","27"],"c":2},{"level":8,"s":"Geography","q":"Which imaginary line passes through Greenwich, England?","a":["Equator","Prime Meridian","Tropic of Cancer","International Date Line"],"c":1},{"level":11,"s":"Science","q":"Which branch of science studies living organisms?","a":["Physics","Chemistry","Biology","Astronomy"],"c":2},{"level":11,"s":"History","q":"Which year is associated with the Quit India Movement?","a":["1942","1930","1919","1947"],"c":0},{"level":11,"s":"Geography","q":"Which layer of Earth forms the continents and ocean floors?","a":["Crust","Outer core","Inner core","Atmosphere"],"c":0},{"level":12,"s":"Science","q":"Which principle states that matter and energy are conserved in a closed system?","a":["Conservation laws","Uncertainty principle","Pauli exclusion principle","Archimedes' principle"],"c":0},{"level":12,"s":"History","q":"Which movement was launched in India in August 1942?","a":["Non-Cooperation Movement","Quit India Movement","Swadeshi Movement","Civil Disobedience Movement"],"c":1},{"level":12,"s":"Geography","q":"Which type of rainfall is common where warm moist air rises rapidly in tropical regions?","a":["Convectional rainfall","Frontal rainfall","Relief rainfall","Cyclonic rainfall"],"c":0},{"level":5,"s":"General Knowledge","q":"Which festival is known as the festival of lights?","a":["Holi","Diwali","Eid","Baisakhi"],"c":1}];
+const levels=[3,4,5,6,7,8,9,10,11,12];
+let state=JSON.parse(localStorage.novara||'{"answered":0,"correct":0,"xp":0,"tasks":[],"plan":"Standard","streak":1,"level":6}');
+if(!Array.isArray(state.mistakes)) state.mistakes=[];
+if(!state.questionHistory || typeof state.questionHistory!=='object') state.questionHistory={};
+if(!state.level)state.level=6;
+
+function save(){localStorage.novara=JSON.stringify(state);updateStats()}
+function show(id,btn){
+ document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');
+ document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));
+ if(btn)btn.classList.add('active');renderTasks();
+}
+function subjectCard(x){return `<div class="card subject"><div class="subjectIcon">${icons[x[1]]}</div><h3>${x[0]}</h3><p>${x[2]}</p><button class="secondary" onclick="subjectQuiz('${x[0]}')">Practice</button></div>`}
+function renderAll(){
+ document.getElementById('homeSubjects').innerHTML=subjects.slice(0,6).map(subjectCard).join('');
+ document.getElementById('subjectsGrid').innerHTML=subjects.map(subjectCard).join('');
+ document.getElementById('levelsGrid').innerHTML=levels.map(l=>`<div class="card"><h3>Class ${l}</h3><p style="color:var(--muted)">Class ${l} question bank · class-specific topics.</p><button class="${state.level===l?'primary':'secondary'}" onclick="selectLevel(${l})">${state.level===l?'Selected':'Choose class'}</button></div>`).join('');
+ document.getElementById('quickLevels').innerHTML=levels.map(l=>`<button class="levelBtn ${state.level===l?'selected':''}" onclick="selectLevel(${l})">${l}</button>`).join('');
+ document.getElementById('homeLevelTitle').textContent='Class '+state.level;document.getElementById('quizLevel').textContent='Class '+state.level;document.getElementById('settingsClass').textContent='Class '+state.level;
+}
+function selectLevel(l){state.level=l;save();renderAll();show('home');openModal('Class '+l+' selected','Your practice questions are now matched to Class '+l+'.')}
+let quiz=[],qi=0,locked=false,quizMode='daily',quizScore=0,quizSeconds=0,quizTimerHandle=null;
+
+function questionKey(x){return `${x.level}|${x.s}|${x.q}`;}
+function shuffled(arr){return [...arr].sort(()=>Math.random()-.5);}
+
+function pickBalanced(pool,count){
+  const result=[];
+  const groups={};
+  pool.forEach(x=>(groups[x.s] ||= []).push(x));
+  const buckets=Object.values(groups);
+  let round=0;
+  while(result.length<count && buckets.length){
+    const bucket=buckets[round % buckets.length];
+    if(bucket.length){
+      const index=Math.floor(Math.random()*bucket.length);
+      result.push(bucket.splice(index,1)[0]);
+    }
+    round++;
+    if(round>count*12) break;
+  }
+  if(result.length<count){
+    for(const x of shuffled(pool)){
+      if(result.length>=count) break;
+      if(!result.includes(x)) result.push(x);
+    }
+  }
+  return result;
+}
+
+function beginQuiz(pool,title,count,mode='daily',seconds=0){
+  if(!pool.length){
+    openModal('No questions available','Try another mode or choose a different subject.');
+    return;
+  }
+  quizMode=mode;
+  quiz=pickBalanced(pool,Math.min(count,pool.length));
+  qi=0;quizScore=0;locked=false;quizSeconds=seconds;
+
+  document.getElementById('quizIntro').style.display='none';
+  document.getElementById('quizResultActions').style.display='none';
+  document.getElementById('quizTimer').style.display=seconds?'flex':'none';
+
+  if(quizTimerHandle) clearInterval(quizTimerHandle);
+  if(seconds){
+    updateTimer();
+    quizTimerHandle=setInterval(()=>{
+      quizSeconds--;
+      updateTimer();
+      if(quizSeconds<=0){
+        clearInterval(quizTimerHandle);
+        quizTimerHandle=null;
+        finishQuiz(true);
+      }
+    },1000);
+  }
+
+  show('quiz');
+  document.getElementById('quizTitle').textContent=title;
+  renderQuestion();
+}
+
+function startQuiz(){
+  const pool=qs.filter(x=>x.level===state.level);
+  beginQuiz(pool,'Daily Challenge',10,'daily');
+}
+
+function quickQuiz(){
+  const pool=qs.filter(x=>x.level===state.level);
+  beginQuiz(pool,'Quick Practice',5,'quick');
+}
+
+function fullTest(){
+  const pool=qs.filter(x=>x.level===state.level);
+  beginQuiz(pool,'Class '+state.level+' Full Test',20,'test',900);
+}
+
+function subjectQuiz(subject){
+  const pool=qs.filter(x=>x.level===state.level && x.s===subject);
+  beginQuiz(pool,subject+' Practice',Math.min(10,pool.length),'subject');
+}
+
+function reviewMistakes(){
+  const pool=qs.filter(x=>x.level===state.level && state.mistakes.includes(questionKey(x)));
+  if(!pool.length){
+    openModal('No mistakes to review','Great job — you have no saved mistakes for Class '+state.level+' yet.');
+    return;
+  }
+  beginQuiz(pool,'Mistake Review',Math.min(10,pool.length),'review');
+}
+
+function difficultyFor(level){
+  if(level<=4) return 'Foundation';
+  if(level<=6) return 'Core';
+  if(level<=8) return 'Intermediate';
+  if(level<=10) return 'Advanced';
+  return 'Senior';
+}
+
+function renderQuestion(){
+  locked=false;
+  const x=quiz[qi];
+  if(!x) return;
+
+  document.getElementById('qcount').textContent=`Question ${qi+1}/${quiz.length}`;
+  document.getElementById('qbar').style.width=(qi/quiz.length*100)+'%';
+  document.getElementById('difficultyChip').textContent=difficultyFor(x.level);
+  document.getElementById('subjectChip').textContent=x.s;
+  document.getElementById('quizLevel').textContent='Class '+state.level;
+  document.getElementById('question').textContent=x.q;
+  document.getElementById('feedback').textContent='';
+
+  document.getElementById('explanationBox').style.display='none';
+  document.getElementById('explanationText').textContent='';
+  document.getElementById('explainBtn').style.display='none';
+  document.getElementById('tutorQuestionBtn').style.display='none';
+  document.getElementById('nextBtn').style.display='none';
+  document.getElementById('quizResultActions').style.display='none';
+
+  document.getElementById('answers').innerHTML=x.a.map((a,i)=>
+    `<button class="answer" onclick="answer(${i})">${a}</button>`
+  ).join('');
+  updateTimer();
+}
+
+function updateTimer(){
+  const el=document.getElementById('quizTimer');
+  if(!el) return;
+  if(quizSeconds<=0){el.style.display='none';return;}
+  const m=Math.floor(quizSeconds/60);
+  const s=String(quizSeconds%60).padStart(2,'0');
+  el.textContent=`${m}:${s}`;
+  el.style.color=quizSeconds<=60?'#b42318':'';
+}
+
+function answer(i){
+  if(locked) return;
+  locked=true;
+
+  const x=quiz[qi];
+  const buttons=[...document.querySelectorAll('.answer')];
+  const correct=i===x.c;
+  const key=questionKey(x);
+
+  buttons[x.c].classList.add('correct');
+
+  if(correct){
+    state.correct++;
+    quizScore++;
+    state.xp += quizMode==='test' ? 15 : 10;
+    state.mistakes=state.mistakes.filter(k=>k!==key);
+    document.getElementById('feedback').textContent=quizMode==='test'?'Correct — +15 XP':'Correct — +10 XP';
+  }else{
+    buttons[i].classList.add('wrong');
+    if(!state.mistakes.includes(key)) state.mistakes.push(key);
+    document.getElementById('feedback').textContent='Not quite — the correct answer is highlighted.';
+  }
+
+  state.answered++;
+  state.questionHistory[key]={correct,lastSeen:new Date().toISOString()};
+  save();
+
+  document.getElementById('explainBtn').style.display='inline-block';
+  document.getElementById('tutorQuestionBtn').style.display='inline-block';
+  document.getElementById('nextBtn').style.display='inline-block';
+}
+
+function questionExplanation(x){
+  const answer=x.a[x.c];
+  const q=x.q.toLowerCase();
+
+  if(x.s==='Mathematics'){
+    if(q.includes('%')) return `A percentage means “out of 100”. Convert the percent to a fraction over 100, then apply it to the number.\n\nCorrect answer: ${answer}`;
+    if(q.includes('÷')||q.includes('division')) return `Division means sharing equally or finding how many times one number fits into another.\n\nCorrect answer: ${answer}`;
+    if(q.includes('×')||q.includes('multiply')) return `Multiplication can be understood as repeated addition or equal groups.\n\nCorrect answer: ${answer}`;
+    if(q.includes('square root')) return `A square root is a number that gives the original number when multiplied by itself.\n\nCorrect answer: ${answer}`;
+    if(q.includes('derivative')) return `A derivative measures how quickly a quantity changes.\n\nCorrect answer: ${answer}`;
+    if(q.includes('integral')) return `An integral represents accumulation and is the reverse operation of differentiation for an indefinite integral, with a constant of integration.\n\nCorrect answer: ${answer}`;
+    return `Use the mathematical rule described in the question and check which option satisfies it.\n\nCorrect answer: ${answer}`;
+  }
+
+  const tips={
+    'Science':'Use the scientific definition or process being tested, then match it to the evidence in the question.',
+    'History':'Focus on the person, event, date, cause, or effect named in the question.',
+    'Geography':'Connect the answer to location, physical processes, environment, or human geography.',
+    'English':'Look at how the word or sentence functions in context.',
+    'Reasoning':'Find the rule or pattern that connects the information.',
+    'Computer Science':'Match the term to its exact computing role or definition.',
+    'General Knowledge':'Use the standard fact or definition being tested.'
+  };
+  return `${tips[x.s]||'Read the key term carefully and match it to the concept being tested.'}\n\nCorrect answer: ${answer}`;
+}
+
+function explainCurrentQuestion(){
+  if(!quiz[qi]) return;
+  document.getElementById('explanationText').textContent=questionExplanation(quiz[qi]);
+  document.getElementById('explanationBox').style.display='block';
+}
+
+function askCurrentQuestionTutor(){
+  if(!quiz[qi]) return;
+  show('tutor');
+  const input=document.getElementById('tutorInput');
+  input.value=`Explain this Class ${state.level} ${quiz[qi].s} question step by step: ${quiz[qi].q}`;
+  askTutor();
+}
+
+function finishQuiz(timedOut=false){
+  if(quizTimerHandle){
+    clearInterval(quizTimerHandle);
+    quizTimerHandle=null;
+  }
+  document.getElementById('quizTimer').style.display='none';
+
+  const pct=quiz.length?Math.round(quizScore/quiz.length*100):0;
+  document.getElementById('question').textContent=timedOut?'Time is up!':'Quiz complete!';
+  document.getElementById('answers').innerHTML='';
+  document.getElementById('feedback').textContent=
+    (timedOut?'Time is up. ':'')+
+    `Score: ${quizScore}/${quiz.length} (${pct}%). `+
+    (pct>=90?'Excellent work!':pct>=70?'Nice work — keep practicing.':'Review the explanations and try again.');
+
+  document.getElementById('explanationBox').style.display='none';
+  document.getElementById('explainBtn').style.display='none';
+  document.getElementById('tutorQuestionBtn').style.display='none';
+  document.getElementById('nextBtn').style.display='none';
+  document.getElementById('qbar').style.width='100%';
+  document.getElementById('quizResultActions').style.display='flex';
+  updateStats();
+}
+
+function nextQuestion(){
+  qi++;
+  if(qi>=quiz.length) finishQuiz(false);
+  else renderQuestion();
+}
+
+function addTask(){let v=document.getElementById('taskInput').value.trim();if(!v)return;state.tasks.push({t:v,d:false});document.getElementById('taskInput').value='';save();renderTasks()}
+function renderTasks(){document.getElementById('taskList').innerHTML=state.tasks.map((x,i)=>`<div class="task"><input type="checkbox" ${x.d?'checked':''} onchange="toggleTask(${i})"><span style="${x.d?'text-decoration:line-through;color:var(--muted)':''}">${x.t}</span></div>`).join('')}
+function toggleTask(i){state.tasks[i].d=!state.tasks[i].d;save();renderTasks()}
+function updateStats(){
+ document.getElementById('answered').textContent=state.answered;document.getElementById('correct').textContent=state.correct;document.getElementById('xp').textContent=state.xp;document.getElementById('streak').textContent=state.streak;document.getElementById('streak2').textContent=state.streak;
+ document.getElementById('pAnswered').textContent=state.answered;document.getElementById('ppAnswered').textContent=state.answered;document.getElementById('pxp').textContent=state.xp;
+ let acc=state.answered?Math.round(state.correct/state.answered*100):0;document.getElementById('accuracy').textContent=acc+'%';document.getElementById('pAccuracy').textContent=acc+'%';
+ let lv=Math.floor(state.xp/100)+1;document.getElementById('level').textContent=lv;document.getElementById('pLevel').textContent=lv;document.getElementById('xpbar').style.width=(state.xp%100)+'%';document.getElementById('challengeBar').style.width=Math.min(100,state.answered%10*10)+'%';document.getElementById('progressText').textContent=(state.xp%100)+' / 100 XP to next level'
+}
+
+
+const tutorTopics={
+  fractions:`Fractions show parts of a whole.\n\nExample: 3/4 means 3 equal parts out of 4.\n• Numerator = parts you have\n• Denominator = total equal parts\n\nSend me a fraction question and I can work through it step by step.`,
+  photosynthesis:`Photosynthesis is the process plants use to make food.\n\n1. Roots absorb water.\n2. Leaves take in carbon dioxide.\n3. Chlorophyll captures sunlight.\n4. The plant makes glucose and releases oxygen.\n\nIn simple form: carbon dioxide + water + sunlight → glucose + oxygen.`,
+  respiration:`Respiration is the process cells use to release energy from food.\n\nAerobic respiration uses oxygen and releases energy, carbon dioxide and water.`,
+  gravity:`Gravity is a force that attracts objects toward one another. On Earth, it pulls objects toward the ground.\n\nThat is why a ball falls when you drop it.`,
+  cpu:`CPU means Central Processing Unit. It follows instructions, performs calculations and helps control the computer.`,
+  newton:`Newton's Third Law says forces come in action–reaction pairs: when one object pushes another, the second pushes back with an equal and opposite force.`,
+  democracy:`Democracy is a system of government in which people participate in choosing their representatives. In India, citizens vote in elections to choose representatives.`,
+  constitution:`A constitution is a set of basic rules and principles that explains how a country is governed and what powers and rights exist.`,
+  ecosystem:`An ecosystem is a community of living organisms interacting with each other and with non-living things such as air, water and soil.`,
+  evaporation:`Evaporation is the change of a liquid into a gas from its surface, usually when it gains enough energy.`,
+  photosynthesis:`Photosynthesis is how green plants make food using sunlight, carbon dioxide and water, producing glucose and oxygen.`,
+  percentage:`A percentage means “out of 100”.\n\nTo find p% of a number N:\n(p ÷ 100) × N.\n\nFor example, 15% of 200 = (15 ÷ 100) × 200 = 30.`,
+  derivative:`A derivative measures how quickly a quantity changes.\n\nFor x², the derivative is 2x.`,
+  cells:`A cell is the basic structural and functional unit of living organisms. Plant cells have structures such as a cell wall and chloroplasts; animal cells do not have those two structures.`,
+  force:`Force is a push or pull. Its SI unit is the newton (N).`,
+  energy:`Energy is the ability to do work. Common forms include kinetic, potential, thermal, chemical and electrical energy.`,
+  democracyIndia:`India is a democratic republic. Citizens elect representatives who make decisions through constitutional institutions.`,
+  noun:`A noun is a word used to name a person, place, thing or idea. Example: “school”, “Rohan”, “book”, “freedom”.`,
+  verb:`A verb commonly shows an action or state. Examples: run, write, is, think.`,
+  adjective:`An adjective describes or gives more information about a noun or pronoun. Example: “a bright star” — bright describes star.`,
+  adverb:`An adverb often describes a verb, adjective or another adverb. Example: “She ran quickly.”`,
+  algebra:`In algebra, letters can represent unknown numbers. For example, in x + 5 = 12, subtract 5 from both sides to get x = 7.`,
+  perimeter:`Perimeter is the total distance around a shape. For a rectangle: P = 2(length + width).`,
+  area:`Area measures the surface inside a shape. For a rectangle: A = length × width.`,
+  volume:`Volume measures the space inside a 3D object. For a cuboid: V = length × width × height.`,
+  matter:`Matter is anything that has mass and occupies space. Common states are solid, liquid and gas.`,
+  acidbase:`Acids and bases have different chemical properties. The pH scale is used to describe how acidic or basic a solution is.`,
+  foodchain:`A food chain shows how energy and food move from one organism to another, such as grass → grasshopper → frog → snake.`,
+  map:`A map is a scaled representation of a place. Maps can show physical features, boundaries, roads, population and more.`,
+  latitude:`Latitude measures distance north or south of the Equator in degrees.`,
+  longitude:`Longitude measures distance east or west of the Prime Meridian in degrees.`,
+  history:`History is the study of past events, people, societies and changes over time. Send me the event or period and I can explain the causes, events and effects.`,
+  geography:`Geography studies places, people, environments and the relationships between them. Send me a geography topic or question.`,
+  economics:`Economics studies how people and societies use limited resources to satisfy needs and wants.`,
+  computer:`Computer science studies computation, algorithms, programming, data and how digital systems work.`,
+  coding:`Coding means writing instructions for a computer using a programming language. A program is a sequence of instructions that produces an intended result.`
+};
+
+function normalizeTutorText(s){
+  return s.toLowerCase()
+    .replace(/[“”‘’]/g,'"')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+
+function fmtNumber(n){
+  if(typeof n!=='number' || !Number.isFinite(n)) return String(n);
+  if(Math.abs(n-Math.round(n))<1e-10) return String(Math.round(n));
+  return String(Number(n.toFixed(10)));
+}
+
+function solvePercentage(text){
+  let m = text.match(/(?:what\s+is\s+)?(-?\d+(?:\.\d+)?)\s*%\s*(?:of|from)\s*(-?\d+(?:\.\d+)?)/i);
+  if(!m) m = text.match(/(-?\d+(?:\.\d+)?)\s*(?:percent|per cent)\s*(?:of|from)\s*(-?\d+(?:\.\d+)?)/i);
+  if(!m) return null;
+  const p=Number(m[1]), n=Number(m[2]), ans=p/100*n;
+  return `Let's solve it step by step.\n\n${p}% of ${n}\n= (${p} ÷ 100) × ${n}\n= ${fmtNumber(ans)}\n\nAnswer: ${fmtNumber(ans)}`;
+}
+
+function solvePercentageReverse(text){
+  let m=text.match(/(-?\d+(?:\.\d+)?)\s+is\s+what\s+percent\s+of\s+(-?\d+(?:\.\d+)?)/i);
+  if(!m) return null;
+  const a=Number(m[1]), b=Number(m[2]);
+  if(b===0) return "A percentage cannot be calculated here because the second number is 0.";
+  const ans=a/b*100;
+  return `Let's solve it step by step.\n\nPercentage = (part ÷ whole) × 100\n= (${a} ÷ ${b}) × 100\n= ${fmtNumber(ans)}%\n\nAnswer: ${fmtNumber(ans)}%`;
+}
+
+function solveArithmetic(text){
+  let cleaned=text.toLowerCase()
+    .replace(/what is|calculate|solve|equals|equal to|please|answer|find|the/g,'')
+    .replace(/,/g,'')
+    .replace(/x/g,'*')
+    .trim();
+
+  // Handle phrases like 25 + 7, 12*8, (15/3)+2
+  const safe=/^[0-9+\-*/().%\s]+$/.test(cleaned);
+  if(!safe || !/[+\-*/%]/.test(cleaned)) return null;
+  // Prevent malformed expressions.
+  if(!/^\s*-?\d+(?:\.\d+)?(?:\s*[+\-*/%]\s*\(?\s*-?\d+(?:\.\d+)?\s*\)?)*\s*$/.test(cleaned) && !/^[0-9+\-*/().%\s]+$/.test(cleaned)) return null;
+  try{
+    // Basic parser instead of eval for safety.
+    const tokens=cleaned.match(/-?\d+(?:\.\d+)?|[+\-*/()%]/g);
+    if(!tokens) return null;
+
+    function parseExpr(){
+      let v=parseTerm();
+      while(i<tokens.length && (tokens[i]==='+'||tokens[i]==='-')){
+        let op=tokens[i++], r=parseTerm(); v=op==='+'?v+r:v-r;
+      }
+      return v;
+    }
+    function parseTerm(){
+      let v=parseFactor();
+      while(i<tokens.length && (tokens[i]==='*'||tokens[i]==='/'||tokens[i]==='%')){
+        let op=tokens[i++], r=parseFactor();
+        if(op==='*') v*=r;
+        else if(op==='/'){ if(r===0) throw new Error('Division by zero'); v/=r; }
+        else v%=r;
+      }
+      return v;
+    }
+    function parseFactor(){
+      if(tokens[i]==='('){i++;let v=parseExpr();if(tokens[i]!==')')throw new Error('bad');i++;return v}
+      const v=Number(tokens[i++]); if(Number.isNaN(v))throw new Error('bad'); return v;
+    }
+    let i=0; const ans=parseExpr(); if(i!==tokens.length || !Number.isFinite(ans)) return null;
+    return `Let's calculate it.\n\n${text.trim()}\n= ${fmtNumber(ans)}\n\nAnswer: ${fmtNumber(ans)}`;
+  }catch(e){return null}
+}
+
+function solveLinearEquation(text){
+  let t=text.toLowerCase().replace(/\s+/g,'');
+  // ax+b=c
+  let m=t.match(/^(-?\d*\.?\d*)x([+-]\d*\.?\d*)=(-?\d*\.?\d*)$/);
+  if(m){
+    let a=m[1]; a=(a===''||a==='+')?1:(a==='-'?-1:Number(a));
+    let b=Number(m[2]||0), c=Number(m[3]); 
+    if(a===0) return "This equation does not contain a variable term.";
+    const x=(c-b)/a;
+    return `Let's solve it step by step.\n\n${text.trim()}\n\n1. Move the constant term to the other side.\n2. Divide by the coefficient of x.\n\nx = (${fmtNumber(c)} − ${fmtNumber(b)}) ÷ ${fmtNumber(a)}\nx = ${fmtNumber(x)}\n\nAnswer: x = ${fmtNumber(x)}`;
+  }
+  m=t.match(/^(-?\d*\.?\d*)x=(-?\d*\.?\d*)$/);
+  if(m){
+    let a=m[1]; a=(a===''||a==='+')?1:(a==='-'?-1:Number(a));
+    const c=Number(m[2]),x=c/a;
+    return `Divide both sides by ${fmtNumber(a)}.\n\nx = ${fmtNumber(x)}\n\nAnswer: x = ${fmtNumber(x)}`;
+  }
+  return null;
+}
+
+function solveRatio(text){
+  let m=text.match(/ratio\s+([0-9]+)\s*:\s*([0-9]+).*?([0-9]+)\s*:\s*x/i);
+  if(m){
+    const a=Number(m[1]),b=Number(m[2]),c=Number(m[3]);
+    if(a!==0) return `Using equivalent ratios:\n\n${a}/${b} = ${c}/x\n\nCross multiply: ${a}x = ${b*c}\nx = ${fmtNumber((b*c)/a)}`;
+  }
+  return null;
+}
+
+function solveUnits(text){
+  let m=text.match(/(-?\d+(?:\.\d+)?)\s*(km|m|cm|mm|kg|g|mg|l|ml|hours?|minutes?|seconds?)\s+(?:to|into|in)\s+(km|m|cm|mm|kg|g|mg|l|ml|hours?|minutes?|seconds?)/i);
+  if(!m) return null;
+  const n=Number(m[1]), from=m[2].toLowerCase(), to=m[3].toLowerCase();
+  const map={km:1000,m:1,cm:.01,mm:.001,kg:1000,g:1,mg:.001,l:1,ml:.001,hour:3600,hours:3600,minute:60,minutes:60,second:1,seconds:1};
+  if(!(from in map)||!(to in map)) return null;
+  const categories={
+    km:['km','m','cm','mm'],m:['km','m','cm','mm'],cm:['km','m','cm','mm'],mm:['km','m','cm','mm'],
+    kg:['kg','g','mg'],g:['kg','g','mg'],mg:['kg','g','mg'],
+    l:['l','ml'],ml:['l','ml'],hour:['hour','hours','minute','minutes','second','seconds'],hours:['hour','hours','minute','minutes','second','seconds'],
+    minute:['hour','hours','minute','minutes','second','seconds'],minutes:['hour','hours','minute','minutes','second','seconds'],
+    second:['hour','hours','minute','minutes','second','seconds'],seconds:['hour','hours','minute','minutes','second','seconds']
+  };
+  if(!categories[from]?.includes(to)) return null;
+  const ans=n*map[from]/map[to];
+  return `${fmtNumber(n)} ${from} = ${fmtNumber(ans)} ${to}.\n\nConversion uses the standard relationship between these units.`;
+}
+
+
+function solvePercentageChange(text){
+  const t=text.toLowerCase();
+  let m=t.match(/(?:increase|increased|rise|raised).*?from\s+(-?\d+(?:\.\d+)?)\s+to\s+(-?\d+(?:\.\d+)?)/);
+  let type='increase';
+  if(!m){
+    m=t.match(/(?:decrease|decreased|drop|reduced|reduction).*?from\s+(-?\d+(?:\.\d+)?)\s+to\s+(-?\d+(?:\.\d+)?)/);
+    type='decrease';
+  }
+  if(!m) return null;
+  const oldV=Number(m[1]),newV=Number(m[2]);
+  if(oldV===0) return "Percentage change cannot be calculated because the original value is 0.";
+  const pct=Math.abs(newV-oldV)/Math.abs(oldV)*100;
+  return `Let's solve it step by step.\n\nPercentage change = |new − original| ÷ original × 100\n= |${fmtNumber(newV)} − ${fmtNumber(oldV)}| ÷ ${fmtNumber(oldV)} × 100\n= ${fmtNumber(pct)}%\n\nSo this is a ${type} of ${fmtNumber(pct)}%.`;
+}
+
+function solveDiscountProfit(text){
+  const t=text.toLowerCase().replace(/,/g,'');
+  let m=t.match(/(?:marked|list)\s*price\s*(?:is|=)\s*₹?\s*(-?\d+(?:\.\d+)?).*?(?:discount)\s*(?:of|=)\s*(-?\d+(?:\.\d+)?)\s*%/);
+  if(m){
+    const mp=Number(m[1]),d=Number(m[2]),sp=mp*(1-d/100);
+    return `Marked price = ₹${fmtNumber(mp)}\nDiscount = ${fmtNumber(d)}%\n\nDiscount amount = (${fmtNumber(d)} ÷ 100) × ${fmtNumber(mp)} = ₹${fmtNumber(mp*d/100)}\nSelling price = ${fmtNumber(mp)} − ${fmtNumber(mp*d/100)} = ₹${fmtNumber(sp)}\n\nAnswer: ₹${fmtNumber(sp)}`;
+  }
+  m=t.match(/(?:cost\s*price|cp)\s*(?:is|=)\s*₹?\s*(-?\d+(?:\.\d+)?).*?(?:profit)\s*(?:of|=)\s*(-?\d+(?:\.\d+)?)\s*%/);
+  if(m){
+    const cp=Number(m[1]),p=Number(m[2]),sp=cp*(1+p/100);
+    return `Cost price = ₹${fmtNumber(cp)}\nProfit = ${fmtNumber(p)}%\n\nProfit = (${fmtNumber(p)} ÷ 100) × ${fmtNumber(cp)} = ₹${fmtNumber(cp*p/100)}\nSelling price = ${fmtNumber(cp)} + ${fmtNumber(cp*p/100)} = ₹${fmtNumber(sp)}\n\nAnswer: ₹${fmtNumber(sp)}`;
+  }
+  return null;
+}
+
+function solveAverage(text){
+  const m=text.match(/(?:average|mean)(?:\s+of)?\s*[:=]?\s*([0-9]+(?:\s*,\s*[0-9]+)+)/i);
+  if(!m) return null;
+  const nums=m[1].split(',').map(Number);
+  const sum=nums.reduce((a,b)=>a+b,0),avg=sum/nums.length;
+  return `To find the average:\n\n1. Add the values: ${nums.join(' + ')} = ${fmtNumber(sum)}\n2. Divide by the number of values: ${fmtNumber(sum)} ÷ ${nums.length}\n\nAnswer: ${fmtNumber(avg)}`;
+}
+
+function solveSpeedDistanceTime(text){
+  const t=text.toLowerCase().replace(/,/g,'');
+  let m=t.match(/(?:travels?|covers?|moves?)\s+(-?\d+(?:\.\d+)?)\s*(km|m)\s+(?:in|over)\s+(-?\d+(?:\.\d+)?)\s*(hours?|minutes?|seconds?)/);
+  if(m){
+    const d=Number(m[1]),du=m[2],time=Number(m[3]),tu=m[4];
+    const seconds=tu.startsWith('hour')?time*3600:tu.startsWith('minute')?time*60:time;
+    const meters=du==='km'?d*1000:d;
+    const ms=meters/seconds, kmh=ms*3.6;
+    return `Speed = distance ÷ time\n\nDistance = ${fmtNumber(d)} ${du}\nTime = ${fmtNumber(time)} ${tu}\n\nSpeed = ${fmtNumber(d)} ÷ ${fmtNumber(time)} = ${fmtNumber(du==='km' ? d/time : d/time)} ${du}/${tu}\n\nThat is ${fmtNumber(ms)} m/s or ${fmtNumber(kmh)} km/h.`;
+  }
+  return null;
+}
+
+function solveSimpleInterest(text){
+  const t=text.toLowerCase().replace(/,/g,'');
+  const p=t.match(/principal(?:\s*(?:is|=))?\s*₹?\s*(\d+(?:\.\d+)?)/);
+  const r=t.match(/(?:rate|interest rate)(?:\s*(?:is|=))?\s*(\d+(?:\.\d+)?)\s*%/);
+  const tm=t.match(/(?:time|period)(?:\s*(?:is|=))?\s*(\d+(?:\.\d+)?)\s*(years?|months?)/);
+  if(!p||!r||!tm) return null;
+  const P=Number(p[1]),R=Number(r[1]),T=Number(tm[1])*(tm[2].startsWith('month')?1/12:1);
+  const I=P*R*T/100,A=P+I;
+  return `Simple Interest = (P × R × T) ÷ 100\n\n= (${fmtNumber(P)} × ${fmtNumber(R)} × ${fmtNumber(T)}) ÷ 100\n= ₹${fmtNumber(I)}\n\nAmount = Principal + Interest\n= ₹${fmtNumber(P)} + ₹${fmtNumber(I)}\n= ₹${fmtNumber(A)}\n\nAnswer: ₹${fmtNumber(A)}`;
+}
+
+function solveCompoundInterest(text){
+  const t=text.toLowerCase().replace(/,/g,'');
+  const p=t.match(/principal(?:\s*(?:is|=))?\s*₹?\s*(\d+(?:\.\d+)?)/);
+  const r=t.match(/(?:rate|interest rate)(?:\s*(?:is|=))?\s*(\d+(?:\.\d+)?)\s*%/);
+  const tm=t.match(/(?:time|period)(?:\s*(?:is|=))?\s*(\d+(?:\.\d+)?)\s*years?/);
+  if(!p||!r||!tm) return null;
+  const P=Number(p[1]),R=Number(r[1]),T=Number(tm[1]);
+  const A=P*Math.pow(1+R/100,T),I=A-P;
+  return `Compound Amount = P(1 + R/100)^T\n\n= ${fmtNumber(P)}(1 + ${fmtNumber(R)}/100)^${fmtNumber(T)}\n= ₹${fmtNumber(A)}\n\nCompound Interest = Amount − Principal\n= ₹${fmtNumber(I)}\n\nAnswer: ₹${fmtNumber(A)}`;
+}
+
+function solvePythagoras(text){
+  const m=text.match(/(?:right\s+triangle|triangle).*?(?:legs?|sides?)\s*(?:are|of|measure)\s*(\d+(?:\.\d+)?)\s*(?:and|,)\s*(\d+(?:\.\d+)?)/i);
+  if(!m || !/hypotenuse|right triangle|right-angled/i.test(text)) return null;
+  const a=Number(m[1]),b=Number(m[2]),c=Math.sqrt(a*a+b*b);
+  return `Using the Pythagorean theorem:\n\nc² = a² + b²\n= ${fmtNumber(a)}² + ${fmtNumber(b)}²\n= ${fmtNumber(a*a+b*b)}\n\nc = √${fmtNumber(a*a+b*b)} = ${fmtNumber(c)}\n\nAnswer: ${fmtNumber(c)} units.`;
+}
+
+function solveGeometry(text){
+  const t=text.toLowerCase().replace(/,/g,'');
+  let m=t.match(/(?:rectangle).*?(?:length)\s*(?:is|=)?\s*(\d+(?:\.\d+)?)\s*(?:cm|m|units?)?.*?(?:width)\s*(?:is|=)?\s*(\d+(?:\.\d+)?)/i);
+  if(m){
+    const l=Number(m[1]),w=Number(m[2]);
+    return `For a rectangle:\n\nArea = length × width\n= ${fmtNumber(l)} × ${fmtNumber(w)}\n= ${fmtNumber(l*w)} square units\n\nPerimeter = 2(length + width)\n= 2(${fmtNumber(l)} + ${fmtNumber(w)})\n= ${fmtNumber(2*(l+w))} units.`;
+  }
+  m=t.match(/(?:circle).*?(?:radius|r)\s*(?:is|=)?\s*(\d+(?:\.\d+)?)/i);
+  if(m){
+    const r=Number(m[1]),area=Math.PI*r*r,circ=2*Math.PI*r;
+    return `For a circle with radius ${fmtNumber(r)}:\n\nArea = πr² ≈ ${fmtNumber(area)} square units\nCircumference = 2πr ≈ ${fmtNumber(circ)} units.`;
+  }
+  return null;
+}
+
+function solvePhysicsFormula(text){
+  const t=text.toLowerCase().replace(/,/g,'');
+  let m=t.match(/(?:ohm'?s law|voltage)\D+(\d+(?:\.\d+)?)\s*(?:v|volt(?:s)?).*?(?:resistance|r)\D+(\d+(?:\.\d+)?)\s*(?:ohm|Ω)/i);
+  if(m){
+    const V=Number(m[1]),R=Number(m[2]),I=V/R;
+    return `Using Ohm's law, V = IR.\n\nI = V ÷ R\n= ${fmtNumber(V)} ÷ ${fmtNumber(R)}\n= ${fmtNumber(I)} A\n\nAnswer: ${fmtNumber(I)} amperes.`;
+  }
+  m=t.match(/(?:mass)\D+(\d+(?:\.\d+)?)\s*kg.*?(?:acceleration|a)\D+(\d+(?:\.\d+)?)\s*m\/?s2/i);
+  if(m){
+    const mass=Number(m[1]),a=Number(m[2]),F=mass*a;
+    return `Using Newton's second law, F = ma.\n\nF = ${fmtNumber(mass)} × ${fmtNumber(a)}\n= ${fmtNumber(F)} N\n\nAnswer: ${fmtNumber(F)} newtons.`;
+  }
+  m=t.match(/(?:mass)\D+(\d+(?:\.\d+)?)\s*kg.*?(?:volume)\D+(\d+(?:\.\d+)?)\s*(?:m3|m³)/i);
+  if(m){
+    const mass=Number(m[1]),vol=Number(m[2]),density=mass/vol;
+    return `Density = mass ÷ volume\n\n= ${fmtNumber(mass)} ÷ ${fmtNumber(vol)}\n= ${fmtNumber(density)} kg/m³\n\nAnswer: ${fmtNumber(density)} kg/m³.`;
+  }
+  return null;
+}
+
+function advancedConceptResponse(text){
+  const t=normalizeTutorText(text);
+
+  if(/why.*sky.*blue|why is the sky blue/.test(t))
+    return `The sky looks blue because of Rayleigh scattering.\n\n1. Sunlight contains many colours.\n2. Earth's atmosphere contains tiny gas molecules.\n3. Shorter wavelengths, especially blue light, are scattered more strongly than longer wavelengths.\n4. The scattered blue light reaches our eyes from many directions.\n\nThat is why the daytime sky usually appears blue.`;
+
+  if(/why.*seasons|cause.*seasons/.test(t))
+    return `Seasons are mainly caused by Earth's axial tilt as Earth travels around the Sun.\n\n1. Earth's axis is tilted by about 23.5°.\n2. As Earth orbits the Sun, each hemisphere alternately tilts toward or away from the Sun.\n3. A hemisphere tilted toward the Sun gets more direct sunlight and longer days → summer.\n4. The hemisphere tilted away gets less direct sunlight and shorter days → winter.`;
+
+  if(/why.*rain|how.*rain.*form|formation of rain/.test(t))
+    return `Rain forms through the water cycle.\n\n1. Sunlight heats water and causes evaporation.\n2. Water vapour rises and cools.\n3. It condenses around tiny particles to form cloud droplets.\n4. Droplets combine and become large enough to fall under gravity.\n\nThe falling water is precipitation, including rain.`;
+
+  if(/difference between .* and /.test(t)){
+    return `For a useful comparison, look at definition, purpose, and an example.\n\nSend the two terms exactly (for example, “mitosis and meiosis”), and I’ll give you a side-by-side comparison with key differences and examples.`;
+  }
+
+  if(/cause|causes|effect|effects|why did|why does|why do|explain why|how does|how do/.test(t)){
+    if(/history|revolution|empire|war|movement|independence|colonial/.test(t))
+      return `Let's break the historical question into four parts:\n\n1. Background — what was happening before the event?\n2. Causes — the political, economic, social, or other factors that contributed.\n3. Event — what actually happened?\n4. Effects — what changed afterward?\n\nSend the exact event or chapter name and I can apply this structure to it.`;
+    if(/science|physics|chemistry|biology|plant|cell|force|energy|reaction/.test(t))
+      return `Let's answer it scientifically:\n\n1. Identify the process or principle.\n2. Describe what causes it.\n3. Explain the sequence of events.\n4. State the result and, when useful, give an example.\n\nSend the exact question and I’ll fill in each step.`;
+  }
+
+  return null;
+}
+
+function conceptResponse(text){
+  const t=normalizeTutorText(text);
+  const rules=[
+    [/photosynthesis|plant.*food/,tutorTopics.photosynthesis],
+    [/respiration/,tutorTopics.respiration],
+    [/fraction/,tutorTopics.fractions],
+    [/gravity/,tutorTopics.gravity],
+    [/\bcpu\b|central processing unit/,tutorTopics.cpu],
+    [/newton/,tutorTopics.newton],
+    [/ecosystem|food chain/,tutorTopics.ecosystem],
+    [/evaporation/,tutorTopics.evaporation],
+    [/cell\b|cells\b/,tutorTopics.cells],
+    [/\bforce\b/,tutorTopics.force],
+    [/\benergy\b/,tutorTopics.energy],
+    [/democracy/,tutorTopics.democracy],
+    [/constitution/,tutorTopics.constitution],
+    [/noun/,tutorTopics.noun],
+    [/verb/,tutorTopics.verb],
+    [/adjective/,tutorTopics.adjective],
+    [/adverb/,tutorTopics.adverb],
+    [/perimeter/,tutorTopics.perimeter],
+    [/\barea\b/,tutorTopics.area],
+    [/volume/,tutorTopics.volume],
+    [/matter|solid.*liquid.*gas/,tutorTopics.matter],
+    [/acid|base|ph/,tutorTopics.acidbase],
+    [/map|maps/,tutorTopics.map],
+    [/latitude/,tutorTopics.latitude],
+    [/longitude/,tutorTopics.longitude],
+    [/history|historical|empire|revolution|war|king|queen/,tutorTopics.history],
+    [/geography|continent|ocean|river|climate|mountain/,tutorTopics.geography],
+    [/economics|economy|supply|demand/,tutorTopics.economics],
+    [/computer science|algorithm|programming/,tutorTopics.computer],
+    [/coding|code|javascript|python|html|css/,tutorTopics.coding],
+    [/derivative/,tutorTopics.derivative],
+    [/algebra|equation|solve for x|unknown/,tutorTopics.algebra]
+  ];
+  for(const [re,ans] of rules) if(re.test(t)) return ans;
+  return null;
+}
+
+function builtInTutor(text){
+  const original=text.trim();
+
+  // Hard numeric / multi-step solvers first.
+  const solvers=[
+    solvePercentage,
+    solvePercentageReverse,
+    solvePercentageChange,
+    solveDiscountProfit,
+    solveAverage,
+    solveSpeedDistanceTime,
+    solveSimpleInterest,
+    solveCompoundInterest,
+    solveLinearEquation,
+    solveRatio,
+    solvePythagoras,
+    solveGeometry,
+    solvePhysicsFormula,
+    solveUnits
+  ];
+  for(const solver of solvers){
+    const result=solver(original);
+    if(result) return result;
+  }
+
+  // Arithmetic written in words.
+  let arithmeticText=original
+    .replace(/\btimes\b/gi,'*')
+    .replace(/\bmultiplied by\b/gi,'*')
+    .replace(/\bplus\b/gi,'+')
+    .replace(/\bminus\b/gi,'-')
+    .replace(/\bdivided by\b/gi,'/');
+  const arithmetic=solveArithmetic(arithmeticText);
+  if(arithmetic) return arithmetic;
+
+  // More involved conceptual explanations.
+  const advanced=advancedConceptResponse(original);
+  if(advanced) return advanced;
+
+  const concept=conceptResponse(original);
+  if(concept) return concept;
+
+  // Exact question bank match.
+  const direct=qs.find(x=>normalizeTutorText(x.q)===normalizeTutorText(original));
+  if(direct){
+    return `Let's solve it step by step.\n\nQuestion: ${direct.q}\n\nCorrect answer: ${direct.a[direct.c]}\n\nWhy: use the definition or rule tested by this question. If you want more detail, ask me to explain the concept.`;
+  }
+
+  const t=normalizeTutorText(original);
+
+  // Generic handlers that still produce an actual learning response.
+  if(/^(solve|calculate|find|work out|evaluate)\b/.test(t)){
+    return `I'll solve it, but I need the complete expression or question.\n\nTry:\n“solve 2x + 7 = 19”\n“find the area of a rectangle with length 12 cm and width 5 cm”\n“a car travels 180 km in 3 hours. find its speed”`;
+  }
+
+  if(/compare|difference between/.test(t)){
+    return `I can compare two concepts in a clear table.\n\nSend the exact pair, for example:\n• “difference between mitosis and meiosis”\n• “compare mass and weight”\n• “difference between democracy and monarchy”`;
+  }
+
+  const subjectHints=[
+    ['math',['math','algebra','geometry','fraction','percentage','equation','number','calculate','trigonometry','probability']],
+    ['science',['science','biology','physics','chemistry','cell','plant','force','energy','reaction','atom','motion']],
+    ['history',['history','empire','war','revolution','king','queen','ancient','medieval','movement','independence']],
+    ['geography',['geography','map','river','mountain','ocean','climate','continent','soil','latitude','longitude']],
+    ['english',['grammar','noun','verb','adjective','adverb','sentence','vocabulary','tense','literature']],
+    ['computer',['computer','coding','programming','html','python','javascript','algorithm','database']]
+  ];
+  for(const [,keys] of subjectHints){
+    if(keys.some(k=>t.includes(k))){
+      return `I can work through that subject.\n\nSend the full question exactly as it appears in your book or worksheet, including:\n• all numbers/data\n• answer choices, if there are any\n• the passage or diagram description, if the question refers to one\n\nI'll explain the reasoning at Class ${state.level} level instead of only giving the final answer.`;
+    }
+  }
+
+  return `I can handle much more than basic definitions, but I need the complete question to solve it accurately.\n\nTry a full question such as:\n• “A train travels 150 km in 2.5 hours. What is its average speed?”\n• “A rectangle is 12 cm by 7 cm. Find its area and perimeter.”\n• “Why does the sky appear blue?”\n• “Solve 2x + 7 = 19 and explain each step.”\n• “What were the causes and effects of the French Revolution?”`;
+}
+
+
+function tutorAdd(role,text){
+  const box=document.getElementById('tutorMessages');
+  const row=document.createElement('div');row.className='msg '+role;
+  const bubble=document.createElement('div');bubble.className='bubble';bubble.textContent=text;
+  row.appendChild(bubble);box.appendChild(row);box.scrollTop=box.scrollHeight;
+}
+function tutorStore(text){
+  let arr=JSON.parse(localStorage.novaraTutorHistory||'[]');
+  arr.unshift(text);arr=[...new Set(arr)].slice(0,8);localStorage.novaraTutorHistory=JSON.stringify(arr);renderTutorHistory();
+}
+function renderTutorHistory(){
+  const arr=JSON.parse(localStorage.novaraTutorHistory||'[]');
+  document.getElementById('tutorHistory').innerHTML=arr.length?arr.map(x=>`<button onclick="sendTutorPrompt(${JSON.stringify(x)})">${x.slice(0,55)}${x.length>55?'…':''}</button>`).join(''):'<div style="color:var(--muted);font-size:12px">No recent questions yet.</div>';
+}
+function tutorWelcome(){
+  const box=document.getElementById('tutorMessages');if(box.children.length)return;
+  tutorAdd('bot',`Hi! I’m Novara Tutor.\n\nAsk me a complete school question. I can solve calculations and explain many Maths, Science, History, Geography, English, Computer and GK topics for Class ${state.level}.`);
+}
+function sendTutorPrompt(text){show('tutor');document.getElementById('tutorInput').value=text;askTutor()}
+function askTutor(){
+  const input=document.getElementById('tutorInput'),text=input.value.trim();if(!text)return;
+  tutorAdd('user',text);tutorStore(text);input.value='';
+  setTimeout(()=>tutorAdd('bot',builtInTutor(text)),120);
+}
+function clearTutor(){document.getElementById('tutorMessages').innerHTML='';tutorWelcome()}
+
+function searchSubjects(q){q=q.toLowerCase();document.querySelectorAll('#subjectsGrid .subject').forEach(c=>c.style.display=c.innerText.toLowerCase().includes(q)?'':'none')}
+
+function clearSavedData(){
+  openModal('Reset local data','This will clear Novara progress and homework saved in this browser.');
+  const old=document.getElementById('modal').querySelector('.primary');
+  old.textContent='Reset';
+  old.onclick=()=>{
+    localStorage.removeItem('novara');
+    localStorage.removeItem('novaraTutorHistory');
+    state={answered:0,correct:0,xp:0,tasks:[],plan:'Standard',streak:1,level:6,mistakes:[],questionHistory:{}};
+    renderAll();updateStats();renderTasks();renderTutorHistory();clearTutor();
+    old.textContent='Continue';old.onclick=closeModal;closeModal();
+  };
+}
+
+
+let billingRegion = localStorage.novaraBillingRegion ||
+  ((navigator.language || '').toLowerCase().endsWith('-in') ? 'IN' : 'INTL');
+
+function updatePaymentButtons(){
+  const plus=document.getElementById('plusBuyBtn');
+  const pro=document.getElementById('proBuyBtn');
+  const plusReady=!!paymentUrlFor('PLUS');
+  const proReady=!!paymentUrlFor('PRO');
+
+  if(plus){
+    plus.disabled=!plusReady;
+    plus.textContent=plusReady?'Choose Plus':'Setup required';
+    plus.title=plusReady?'Open Plus checkout':'The owner has not connected the Plus checkout link yet';
+    plus.style.opacity=plusReady?'1':'.6';
+  }
+  if(pro){
+    pro.disabled=!proReady;
+    pro.textContent=proReady?'Choose Pro':'Setup required';
+    pro.title=proReady?'Open Pro checkout':'The owner has not connected the Pro checkout link yet';
+    pro.style.opacity=proReady?'1':'.6';
+  }
+}
+
+function setBillingRegion(region){
+  billingRegion=region;
+  localStorage.novaraBillingRegion=region;
+  const select=document.getElementById('billingRegion');
+  if(select) select.value=region;
+  const plus=document.getElementById('plusPrice');
+  const pro=document.getElementById('proPrice');
+  if(plus) plus.textContent=region==='IN' ? '₹49 / month' : '$0.40 / month';
+  if(pro) pro.textContent=region==='IN' ? '₹92 / month' : '$0.92 / month';
+  updatePaymentButtons();
+}
+
+async function syncServerPlan(){
+  try{
+    const response=await fetch('/api/me',{credentials:'include'});
+    if(!response.ok) return;
+    const data=await response.json();
+    if(data.plan){
+      state.plan=data.plan;
+      localStorage.novara=JSON.stringify(state);
+      const el=document.getElementById('accountPlan');
+      if(el) el.textContent=data.plan;
+    }
+  }catch(_){}
+}
+
+
+
+const PAYMENT_LINKS={
+  PLUS_INR:"",
+  PRO_INR:"",
+  PLUS_USD:"",
+  PRO_USD:""
+};
+const PAYMENTS_READY=Object.values(PAYMENT_LINKS).some(Boolean);
+
+function paymentUrlFor(tier){
+  return PAYMENT_LINKS[tier+'_'+(billingRegion==='IN'?'INR':'USD')]||'';
+}
+
+
+function openHostedPayment(tier){
+  const key=tier+'_'+(billingRegion==='IN'?'INR':'USD');
+  const url=PAYMENT_LINKS[key];
+
+  if(!url){
+    // This is an owner setup state, not a customer payment error.
+    openModal(
+      'Payments are being set up',
+      `The ${tier==='PLUS'?'Plus':'Pro'} checkout link for ${billingRegion==='IN'?'India':'International'} has not been connected yet.`
+    );
+    return;
+  }
+
+  const popup=window.open(url,'_blank','noopener,noreferrer');
+  if(!popup){
+    openModal(
+      'Open checkout in your browser',
+      'Your app preview blocked the payment tab. Open the checkout link in your normal browser.'
+    );
+  }
+}
+
+function openModal(t,m){document.getElementById('modalTitle').textContent=t;document.getElementById('modalText').textContent=m;document.getElementById('modal').classList.add('show')}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+renderAll();updateStats();renderTasks();renderTutorHistory();tutorWelcome();setBillingRegion(billingRegion);updatePaymentButtons();
+</script>
+</body>
+</html>
